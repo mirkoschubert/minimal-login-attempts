@@ -1,0 +1,14 @@
+#mla-plugin h1 small {
+  color: #bbb;
+  font-size: 12px;
+  line-height: 12px;
+}
+
+#mla-plugin .postbox .inside .buttons {
+  height: 30px;
+}
+
+#mla-plugin #dashboard_right_now .retries-count a:before { content: '\f463'; }
+#mla-plugin #dashboard_right_now .lockouts-count a:before { content: '\f160'; }
+#mla-plugin #dashboard_right_now .bans-count a:before { content: '\f194'; }
+#mla-plugin #dashboard_right_now .whitelisted-count a:before { content: '\f484'; }

@@ -1,0 +1,6 @@
+.DS_Store
+deploy.sh
+push.sh
+.synchronize
+rsync.log
+translation.txt

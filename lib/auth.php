@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || die();
 
 class MLA_Auth {
 
@@ -101,4 +102,16 @@ class MLA_Auth {
 
 		return (!is_array($lockouts) || !isset($lockouts[$ip] ) || time() >= $lockouts[$ip]);
 	}
+
+  public function limit_login_failed($username) {
+
+		if(!session_id()) {
+			session_start();
+		}
+
+		$_SESSION['login_attempts_left'] = 0;
+	
+    
+	}
+  
 }

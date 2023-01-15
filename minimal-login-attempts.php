@@ -28,9 +28,11 @@ $mla_just_lockedout = false; /* started this pageload??? */
 $mla_nonempty_credentials = false; /* user and pwd nonempty */
 
 require_once(MLA_PLUGIN_DIR . '/lib/options.php');
+require_once(MLA_PLUGIN_DIR . '/lib/db.php');
 require_once(MLA_PLUGIN_DIR . '/lib/auth.php');
 require_once(MLA_PLUGIN_DIR . '/lib/admin.php');
 require_once(MLA_PLUGIN_DIR . '/lib/mla.php');
 
 $options = new MLA_Options();
+$db = new MLA_DB();
 $mla = new MLA();

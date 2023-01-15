@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || die();
 
 class MLA {
 
@@ -56,9 +57,12 @@ class MLA {
    * Hook: 'plugins_loaded'
    */
   public function setup() {
+    global $options;
 
     // Load languages files
 		load_plugin_textdomain('mla', false, plugin_basename(dirname(__FILE__)) . '/../lang');
+
+    //$options->sanitize_options();
 
     if (is_admin()) {
       $this->admin = new MLA_Admin();

@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) exit();
 
 <div id="mla-plugin" class="wrap"> 
   <div id="icon-plugins" class="icon32"></div> 
-  <h1><?php _e('Minimal Login Attempts', 'mla'); ?> <small><?php echo 'v'. $this->plugin_version; ?></small></h1>
+  <h1><?php _e('Minimal Login Attempts', 'mla'); ?> <small><?php echo 'v'. $options->plugin_version; ?></small></h1>
   <form action="options.php" method="POST">
     <div id="dashboard-widgets-wrap">
 
@@ -66,7 +66,7 @@ if (!defined('ABSPATH')) exit();
                             min="3"
                             max="10"
                             step="1"
-                            value="<?php echo($this->get_option('allowed_retries')); ?>"
+                            value="<?php echo($options->get_option('allowed_retries')); ?>"
                           />
                           <span class="mm-item-caption"><?php esc_html_e('allowed retries', 'mla'); ?></span>
                         </td>
@@ -81,7 +81,7 @@ if (!defined('ABSPATH')) exit();
                             min="3"
                             max="10"
                             step="1"
-                            value="<?php echo($this->get_option('allowed_lockouts')); ?>"
+                            value="<?php echo($options->get_option('allowed_lockouts')); ?>"
                           />
                           <span class="mm-item-caption"><?php esc_html_e('allowed lockouts', 'mla'); ?></span>
                         </td>
@@ -96,7 +96,7 @@ if (!defined('ABSPATH')) exit();
                             min="15"
                             max="60"
                             step="1"
-                            value="<?php echo($this->get_option('lockout_duration') / 60); ?>"
+                            value="<?php echo($options->get_option('lockout_duration') / 60); ?>"
                           />
                           <span class="mm-item-caption"><?php esc_html_e('minutes lockout', 'mla'); ?></span>
                         </td>

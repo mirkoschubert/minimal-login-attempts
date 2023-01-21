@@ -23,12 +23,13 @@ define('MLA_PLUGIN_BASENAME', plugin_basename(__FILE__ ));
 define('MLA_DIRECT_ADDR', 'REMOTE_ADDR');
 define('MLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR');
 
-$mla_my_error_shown = false; /* have we shown our stuff? */
+$mla_error_shown = false; /* have we shown our stuff? */
 $mla_just_lockedout = false; /* started this pageload??? */
 $mla_nonempty_credentials = false; /* user and pwd nonempty */
 
-require_once(MLA_PLUGIN_DIR . '/lib/options.php');
+require_once(MLA_PLUGIN_DIR . '/lib/helpers.php');
 require_once(MLA_PLUGIN_DIR . '/lib/db.php');
+require_once(MLA_PLUGIN_DIR . '/lib/options.php');
 require_once(MLA_PLUGIN_DIR . '/lib/auth.php');
 require_once(MLA_PLUGIN_DIR . '/lib/admin.php');
 require_once(MLA_PLUGIN_DIR . '/lib/mla.php');

@@ -65,6 +65,16 @@ class MLA_Admin {
   public function settings_page() {
     global $options;
 
+    if (!empty($_POST['mla_update_settings'])) {
+      var_dump($_POST);
+
+      $options->update_option('allowed_retries', (int)$_POST['allowed_retries']);
+      $options->update_option('allowed_lockouts', (int)$_POST['allowed_lockouts']);
+      $options->update_option('lockout_duration', (int)$_POST['lockout_duration'] * 60);
+
+      $options->sanitize_options();
+    }
+
     include_once(MLA_PLUGIN_DIR . '/lib/views/settings-page.php');
   }
 

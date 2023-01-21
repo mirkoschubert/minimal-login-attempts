@@ -8,7 +8,10 @@ class MLA_Options {
 		'allowed_retries'     => 5,
 		'lockout_duration'    => 1200, // 20 minutes
 		'allowed_lockouts'    => 3,
-    'db_version'          => 0
+    'db_version'          => 0,
+    'whitelisted'         => array(),
+    'locked_out'          => array(),
+    'banned'              => array()
   );
 
 	public $options_page_slug = 'minimal-login-attempts';
@@ -79,6 +82,5 @@ class MLA_Options {
 		if ($ctype != MLA_DIRECT_ADDR && $ctype != MLA_PROXY_ADDR)
 			$this->update_option('client_type', MLA_DIRECT_ADDR);
   }
-
 
 }

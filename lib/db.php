@@ -46,10 +46,9 @@ class MLA_DB {
           date datetime NOT NULL,
           ip varchar(15) DEFAULT NULL,
           username varchar(255) DEFAULT NULL,
+          password varchar(255) DEFAULT NULL,
           status varchar(20) DEFAULT NULL,
           message varchar(255) DEFAULT NULL,
-          occasionsID varchar(32) DEFAULT NULL,
-          initiator varchar(16) DEFAULT NULL,
           PRIMARY KEY (id),
           KEY date (date)
         ) CHARSET=utf8;
@@ -78,4 +77,50 @@ class MLA_DB {
 
 		return $data_exists;
 	}
+
+	/**
+	 * Removes all items from the log
+	 */
+	public function clear_log() {}
+
+	/**
+	 * Removes old entries from the db
+	 */
+	public function purge_db() {}
+
+
+  /**
+   * Writes a log entry to the database
+   * @since 0.4.0
+   */
+  public function log($status, $data = array()) {
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . self::DBTABLE;
+
+    $data['status'] = $status;
+
+    $result = $wpdb->insert($table_name, $data);
+
+    return $result;
+  }
+
+  public function get_logs_by_ip($ip) {
+
+    if (empty($ip)) return false;
+
+  }
+
+  public function get_status($ip) {
+    
+    $history = $this->get_logs_by_ip($ip);
+
+    // if last_entry === 'banned' return 'banned'
+    // if last_enrty === 'lockout' { compare lockouts, decide for ban }
+    // if last_entry === 'retry' { compare retries, decide for lockout } 
+
+    $allowed_retries = $options->get_option('allowed_retries');
+
+  }
+
 }

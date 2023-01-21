@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) exit();
 <div id="mla-plugin" class="wrap"> 
   <div id="icon-plugins" class="icon32"></div> 
   <h1><?php _e('Minimal Login Attempts', 'mla'); ?> <small><?php echo 'v'. $options->plugin_version; ?></small></h1>
-  <form action="options.php" method="POST">
+  <form action="<?php echo menu_page_url($options->options_page_slug, false ); ?>" method="post">
     <div id="dashboard-widgets-wrap">
 
       <div id="dashboard-widgets" class="metabox-holder">
@@ -106,7 +106,7 @@ if (!defined('ABSPATH')) exit();
                   </table>
 
                   <div class="buttons">
-                    <?php submit_button(); ?>
+                    <input class="button button-primary" name="mla_update_settings" value="<?php echo __( 'Save Settings', 'mla' ); ?>" type="submit"/>
                   </div>
                 </div>
               </div>

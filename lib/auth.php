@@ -26,8 +26,8 @@ class MLA_Auth {
    */
   public function setup() {
 
-    //add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-		//add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
+    add_action('wp_login_failed', array($this, 'limit_login_failed'));
+		add_filter('wp_authenticate_user', array($this, 'wp_authenticate_user'), 99999, 2);
 
     // Add notices for XMLRPC request
 		//add_filter( 'xmlrpc_login_error', array( $this, 'xmlrpc_error_messages' ) );
@@ -41,12 +41,14 @@ class MLA_Auth {
     //add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
   }
 
+
   public function login_enqueue() {
     global $options;
 
 		wp_enqueue_style('mla-login-styles', MLA_PLUGIN_URL . 'assets/css/login.css', array(), $options->plugin_version);
     wp_enqueue_script('jquery');
 	}
+
 
   public function login_gdpr_message() {
 
@@ -57,6 +59,7 @@ class MLA_Auth {
       </div>
     <?php
   }
+
 
   public function login_render_js() {
 	  global $mla_just_lockedout;
@@ -83,6 +86,72 @@ class MLA_Auth {
     endif;
   }
 
+
+  /**
+   * Action when login attempt failed
+   */
+  public function limit_login_failed($username) {
+    global $db;
+
+		if(!session_id()) {
+			session_start();
+		}
+
+		$_SESSION['login_attempts_left'] = 0;
+	
+    // check for lockout or ban
+
+    // else
+    //$date, $ip, $username, $message
+    $ip = $this->get_address();
+
+    //$status $db->get_status($ip)
+
+    //var_dump($ip, $username);
+
+    $db->log('test', array(
+      'date' => gmdate('Y-m-d H:i:s', strtotime('now')),
+      'ip' => $ip,
+      'username' => $username,
+      'message' => ''
+    ));
+    
+	}
+
+
+	public function wp_authenticate_user($user, $password) {
+    global $mla_error_shown;
+
+    if (is_wp_error($user)) {
+      return $user;
+    }
+    $user_login = '';
+
+    if (is_a($user, 'WP_User')) {
+      $user_login = $user->user_login;
+    } else if (!empty($user) && !is_wp_error($user)) {
+      $user_login = $user;
+    }
+
+		if (/* $this->is_ip_whitelisted($this->get_address()) || $this->is_un_whitelisted($user_login) || */ $this->is_limit_login_ok()) {
+			return $user;
+		}
+
+		$error = new WP_Error();
+
+		$mla_error_shown = true;
+
+		/* if ( $this->is_un_banned( $user_login ) || $this->is_ip_blacklisted( $this->get_address() ) ) {
+			$error->add('username_banned', "<strong>ERROR:</strong> Too many failed login attempts.");
+		} else {
+			// This error should be the same as in "shake it" filter below
+			$error->add('too_many_retries', $this->error_msg());
+		} */
+
+		return $error;
+	}
+
+
 /**
 	* Check if it is ok to login
 	* @since 0.3.0
@@ -93,9 +162,9 @@ class MLA_Auth {
 		$ip = $this->get_address();
 
 		/* Check external whitelist filter */
-		if ( $this->is_ip_whitelisted($ip) ) {
+		/* if ($this->is_ip_whitelisted($ip)) {
 			return true;
-		}
+		} */
 
 		/* lockout active? */
 		$lockouts = $options->get_option('lockouts');
@@ -103,15 +172,58 @@ class MLA_Auth {
 		return (!is_array($lockouts) || !isset($lockouts[$ip] ) || time() >= $lockouts[$ip]);
 	}
 
-  public function limit_login_failed($username) {
 
-		if(!session_id()) {
-			session_start();
+
+
+	/**
+	 * Get correct remote address
+	 */
+	public function get_address() {
+
+		$origin = MLA_DIRECT_ADDR;
+		$ip = '';
+
+    if (isset($_SERVER[$origin]) && !empty($_SERVER[$origin])) {
+      if (strpos($_SERVER[$origin], ',') !== false) {
+        $origin_ips = array_map('trim', explode(',', $_SERVER[$origin]));
+        if ($origin_ips) {
+					foreach ($origin_ips as $check_ip) {
+            if ($this->is_ip_valid($check_ip)) {
+              $ip = $check_ip;
+              break;
+            }
+          }
+        }
+      }
+      if ($this->is_ip_valid($_SERVER[$origin])) {
+				$ip = $_SERVER[$origin];
+      }
 		}
 
-		$_SESSION['login_attempts_left'] = 0;
-	
-    
+		return preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip);
 	}
+
+
+  /**
+	 * Validate IP adress
+	 */
+	public function is_ip_valid($ip) {
+
+    if (empty($ip)) return false;
+    return filter_var($ip, FILTER_VALIDATE_IP);
+  }
+
+
+  public function is_ip_whitelisted($ip = null) {
+    global $options;
+
+		if (is_null($ip) ) {
+			$ip = $this->get_address();
+		}
+		$whitelisted = MLA_Helpers::ip_in_range($ip, (array)$options->get_option('whitelisted'));
+
+		return ($whitelisted === true);
+	}
+
   
 }
